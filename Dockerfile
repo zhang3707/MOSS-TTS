@@ -1,11 +1,13 @@
-# 1. 锁死最稳定的 Debian 11 (Bullseye) 纯净系统
+# 1. 依然使用最稳定的 Debian 11 纯净系统
 FROM python:3.10-slim-bullseye
 
-# 2. 安装音频处理绝对必不可少的底层工具
+# 2. 安装音频处理必不可少的工具（补回纯净版 gcc/g++ 以防万一，Bullseye系统装这个很快，不卡死）
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     libsndfile1 \
     git \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 # 3. 设置工作目录
@@ -18,9 +20,10 @@ COPY . .
 ENV PIP_NO_CACHE_DIR=1
 ENV PIP_NEVER_CHECK_VERSION=1
 
-# 6. 删掉清华源，直接使用官方源（海外机器直连官方源，速度极快且版本最全）
+# 6. 绕过原厂 requirements_onnx.txt，直接手动安装核心依赖（核心防御策略！）
 RUN pip install --upgrade pip && \
-    pip install -r requirements_onnx.txt
+    pip install numpy==1.24.3 scipy librosa soundfile gradio && \
+    pip install onnxruntime==1.16.3
 
 # 7. 声明 Gradio 默认网页端口
 EXPOSE 7860
