@@ -1,7 +1,7 @@
-# 1. 锁死最稳定的 Debian 11 (Bullseye) 纯净系统，绝不乱装垃圾图形库
+# 1. 锁死最稳定的 Debian 11 (Bullseye) 纯净系统
 FROM python:3.10-slim-bullseye
 
-# 2. 仅安装音频处理绝对必不可少的底层工具（闪电通过，绝不卡死）
+# 2. 安装音频处理绝对必不可少的底层工具
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     libsndfile1 \
@@ -18,10 +18,9 @@ COPY . .
 ENV PIP_NO_CACHE_DIR=1
 ENV PIP_NEVER_CHECK_VERSION=1
 
-# 6. 一行流顺序安装 Python 依赖（强制利用二进制包，不给服务器任何当场编译的机会）
-RUN pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple && \
-    pip install numpy==1.24.3 -i https://pypi.tuna.tsinghua.edu.cn/simple && \
-    pip install -r requirements_onnx.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+# 6. 删掉清华源，直接使用官方源（海外机器直连官方源，速度极快且版本最全）
+RUN pip install --upgrade pip && \
+    pip install -r requirements_onnx.txt
 
 # 7. 声明 Gradio 默认网页端口
 EXPOSE 7860
