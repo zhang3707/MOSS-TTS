@@ -14,17 +14,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # 3. 设置容器内的工作目录
 WORKDIR /workspace
 
-# 4. 先复制依赖清单，利用 Docker 缓存加速后续打包
-COPY requirements.txt .
-
-# 5. 安装 Python 依赖（使用清华源加速）
-RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
-
-# 6. 把项目的全部源码（包括刚才拉取的子模块）复制进去
+# 4. 把项目的全部源码（包括子模块）先复制进去
 COPY . .
 
-# 7. 声明容器内部使用的 Gradio Web 默认端口
+# 5. 安装项目的真实依赖文件（改用 requirements_onnx.txt，并使用清华源加速）
+RUN pip install --no-cache-dir -r requirements_onnx.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 6. 声明容器内部使用的 Gradio Web 默认端口
 EXPOSE 7860
 
-# 8. 默认启动命令：运行 Web 交互界面
-CMD ["python", "app.py"]
+# 7. 默认启动命令：运行 ONNX 轻量化版本的 Web 界面
+CMD ["python", "app_onnx.py"]
