@@ -1,7 +1,7 @@
-# 1. 依然使用官方轻量 Python 环境
-FROM python:3.10-slim
+# 1. 锁死最稳定的 Debian 11 (Bullseye) 纯净系统，绝不乱装垃圾图形库
+FROM python:3.10-slim-bullseye
 
-# 2. 仅安装音频处理绝对必不可少的底层工具（砍掉所有重型编译工具，防止服务器死机）
+# 2. 仅安装音频处理绝对必不可少的底层工具（闪电通过，绝不卡死）
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     libsndfile1 \
@@ -18,7 +18,7 @@ COPY . .
 ENV PIP_NO_CACHE_DIR=1
 ENV PIP_NEVER_CHECK_VERSION=1
 
-# 6. 一行安装：直接强制使用预编译好的二进制包（不给服务器任何当场编译的机会！）
+# 6. 一行流顺序安装 Python 依赖（强制利用二进制包，不给服务器任何当场编译的机会）
 RUN pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple && \
     pip install numpy==1.24.3 -i https://pypi.tuna.tsinghua.edu.cn/simple && \
     pip install -r requirements_onnx.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
