@@ -1,7 +1,7 @@
-# 1. 使用专为大模型和 PyTorch 准备的轻量化基础镜像
+# 1. 使用官方轻量 Python 环境
 FROM python:3.10-slim
 
-# 2. 安装语音和音频处理必备的系统底层库
+# 2. 安装语音底层工具，并补全 Python-dev 编译头文件
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     libsndfile1 \
@@ -9,19 +9,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
     make \
-    && rm -rf /lib/apt/lists/*
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# 3. 设置容器内的工作目录
+# 3. 设置工作目录
 WORKDIR /workspace
 
-# 4. 把项目的全部源码（包括子模块）先复制进去
+# 4. 先把源码全部复制进去
 COPY . .
 
-# 5. 安装项目的真实依赖文件（改用 requirements_onnx.txt，并使用清华源加速）
-RUN pip install --no-cache-dir -r requirements_onnx.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+# 5. 限制 pip 的缓存和并发，防止挤爆阿里云服务器的内存 (防爆核心)
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_NEVER_CHECK_VERSION=1
 
-# 6. 声明容器内部使用的 Gradio Web 默认端口
+# 6. 分步安装依赖，减轻服务器瞬间内存压力 (限流核心)
+RUN pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install numpy==1.24.3 -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install onnxruntime==1.16.3 -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install -r requirements_onnx.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 7. 声明 Gradio 默认端口
 EXPOSE 7860
 
-# 7. 默认启动命令：运行 ONNX 轻量化版本的 Web 界面
+# 8. 默认启动命令
 CMD ["python", "app_onnx.py"]
