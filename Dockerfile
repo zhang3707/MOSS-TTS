@@ -29,4 +29,4 @@ RUN pip install --upgrade pip && \
 EXPOSE 7860
 
 # 8. 默认启动命令
-CMD ["python", "app_onnx.py"]
+CMD ["python", "moss_tts_local/app.py"]
