@@ -35,7 +35,7 @@ from transformers import (
     AutoTokenizer,
 )
 
-from .configuration_moss_tts import MossTTSDelayConfig
+from configuration_moss_tts import MossTTSDelayConfig
 
 
 logger = logging.get_logger(__name__)

@@ -22,8 +22,8 @@ from transformers.generation.stopping_criteria import StoppingCriteriaList
 from transformers.generation.logits_process import LogitsProcessorList, RepetitionPenaltyLogitsProcessor, TopKLogitsWarper, TopPLogitsWarper, TemperatureLogitsWarper
 from transformers.masking_utils import create_causal_mask
 
-from .inference_utils import find_last_equal_C
-from .configuration_moss_tts import MossTTSDelayConfig
+from inference_utils import find_last_equal_C
+from configuration_moss_tts import MossTTSDelayConfig
 
 import math
 import torch

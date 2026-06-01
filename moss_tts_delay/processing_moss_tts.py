@@ -35,8 +35,8 @@ from transformers import (
     AutoTokenizer,
 )
 
-from .configuration_moss_tts import MossTTSDelayConfig
-from .tts_robust_normalizer_single_script import normalize_tts_text
+from configuration_moss_tts import MossTTSDelayConfig
+from tts_robust_normalizer_single_script import normalize_tts_text
 
 
 logger = logging.get_logger(__name__)

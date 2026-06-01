@@ -34,11 +34,11 @@ from transformers.cache_utils import Cache
 from transformers.models.qwen3 import Qwen3Model
 from transformers import initialization as init
 
-from .configuration_moss_tts import MossTTSDelayConfig
-from .inference_utils import sample_token, find_last_equal_C
+from configuration_moss_tts import MossTTSDelayConfig
+from inference_utils import sample_token, find_last_equal_C
 
 try:
-    from .processing_moss_tts import UserMessage, AssistantMessage, MossTTSDelayProcessor
+    from processing_moss_tts import UserMessage, AssistantMessage, MossTTSDelayProcessor
 except Exception:
     UserMessage = None
     AssistantMessage = None
